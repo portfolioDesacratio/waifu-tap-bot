@@ -91,7 +91,7 @@ def create_app():
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
     
-    app.router.add_post("/webhook", webhook_handler)
+    app.router.add_route("*", "/webhook", webhook_handler)
     app.router.add_get("/health", health_handler)
     app.router.add_get("/", health_handler)
     
