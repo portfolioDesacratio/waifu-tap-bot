@@ -5,6 +5,7 @@ __pycache__/
 venv/
 .venv/
 *.db
+*.db.bak
 .vscode/
 .idea/
 .DS_Store
