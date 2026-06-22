@@ -51,17 +51,18 @@ async def on_startup(app):
     """Настраиваем вебхук при старте"""
     WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "")
     if not WEBHOOK_URL:
-        # Авто-определяем URL от Render
         render_url = os.environ.get("RENDER_EXTERNAL_URL", "")
         if render_url:
             WEBHOOK_URL = render_url.rstrip("/") + "/webhook"
+        else:
+            # Fallback — принудительно
+            WEBHOOK_URL = "https://waifu-tap-bot.onrender.com/webhook"
     
-    if WEBHOOK_URL:
-        try:
-            await bot.set_webhook(url=WEBHOOK_URL)
-            logger.info(f"✅ Webhook set: {WEBHOOK_URL}")
-        except Exception as e:
-            logger.warning(f"⚠️ Webhook failed: {e}")
+    try:
+        await bot.set_webhook(url=WEBHOOK_URL, drop_pending_updates=True)
+        logger.info(f"✅ Webhook set: {WEBHOOK_URL}")
+    except Exception as e:
+        logger.warning(f"⚠️ Webhook failed: {e}")
     
     try:
         await set_commands(bot)
