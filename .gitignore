@@ -10,4 +10,3 @@ venv/
 .DS_Store
 Thumbs.db
 # Render specific
-render.yaml

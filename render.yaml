@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: waifu-tap-bot
+    runtime: python
+    repo: https://github.com/portfolioDesacratio/waifu-tap-bot
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python webhook_server.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_API_ID
+        sync: false
+      - key: TELEGRAM_API_HASH
+        sync: false
+      - key: ADMIN_ID
+        sync: false
+      - key: WEBAPP_URL
+        value: https://portfoliodesacratio.github.io/waifu-tap-temp/
+      - key: API_URL
+        value: https://waifutap.alwaysdata.net
