@@ -29,6 +29,14 @@ logger = logging.getLogger(__name__)
 # Создаём диспетчер без бота (бот — в main)
 dp = Dispatcher()
 
+
+async def safe_delete(message: Message):
+    """Безопасно удалить сообщение (не крашится при ошибках)"""
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
 # ─── API URL ───
 # Бот шлёт запросы на API_URL (локальный сервер или PythonAnywhere)
 API_BASE = config.API_URL
@@ -74,6 +82,7 @@ async def set_commands(bot: Bot):
 @dp.message(Command("start"))
 async def cmd_start(message: Message, command: CommandObject = None):
     """Обработка /start"""
+    await safe_delete(message)
     user = message.from_user
     args = command.args if command else None
 
@@ -134,6 +143,7 @@ async def cmd_start(message: Message, command: CommandObject = None):
 @dp.message(Command("play"))
 async def cmd_play(message: Message):
     """Открыть Mini App"""
+    await safe_delete(message)
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(
             text="🎮 Открыть Waifu Tap",
@@ -150,6 +160,7 @@ async def cmd_play(message: Message):
 @dp.message(Command("profile"))
 async def cmd_profile(message: Message):
     """Показать профиль"""
+    await safe_delete(message)
     tg_id = message.from_user.id
     result = await api_get(f"/api/user/{tg_id}")
 
@@ -187,6 +198,7 @@ async def cmd_profile(message: Message):
 @dp.message(Command("shop"))
 async def cmd_shop(message: Message):
     """Ссылка на магазин в Mini App"""
+    await safe_delete(message)
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(
             text="🛍️ Открыть магазин",
@@ -209,6 +221,7 @@ async def cmd_shop(message: Message):
 @dp.message(Command("top"))
 async def cmd_top(message: Message):
     """Показать топ-10"""
+    await safe_delete(message)
     result = await api_get("/api/leaderboard", {"limit": 15})
 
     if not result.get("success"):
@@ -242,6 +255,7 @@ async def cmd_top(message: Message):
 @dp.message(Command("ref"))
 async def cmd_ref(message: Message):
     """Реферальная ссылка"""
+    await safe_delete(message)
     tg_id = message.from_user.id
     me = await message.bot.get_me()
     bot_username = me.username
@@ -278,6 +292,7 @@ async def cmd_ref(message: Message):
 @dp.message(Command("daily"))
 async def cmd_daily(message: Message):
     """Ежедневная награда"""
+    await safe_delete(message)
     tg_id = message.from_user.id
     result = await api_get(f"/api/daily/status/{tg_id}")
 
@@ -336,8 +351,8 @@ def is_admin(user_id: int) -> bool:
 @dp.message(Command("admin"))
 async def cmd_admin(message: Message):
     """Админ-панель"""
+    await safe_delete(message)
     if not is_admin(message.from_user.id):
-        await message.answer("⛔ У тебя нет доступа к админке")
         return
 
     text = """
@@ -347,6 +362,7 @@ async def cmd_admin(message: Message):
 • <code>/addcoins user_id amount</code> — начислить монеты
 • <code>/addstars user_id amount</code> — начислить Stars
 • <code>/stats</code> — статистика бота
+• <code>/clear</code> — удалить ВСЕХ пользователей
 • <code>/broadcast текст</code> — сообщение всем
 • <code>/admin</code> — эта панель
     """.strip()
@@ -356,8 +372,9 @@ async def cmd_admin(message: Message):
 
 @dp.message(Command("addcoins"))
 async def cmd_addcoins(message: Message, command: CommandObject):
+    await safe_delete(message)
     if not is_admin(message.from_user.id):
-        return await message.answer("⛔ Нет доступа")
+        return
 
     args = command.args.split() if command.args else []
     if len(args) < 2:
@@ -389,8 +406,9 @@ async def cmd_addcoins(message: Message, command: CommandObject):
 
 @dp.message(Command("addstars"))
 async def cmd_addstars(message: Message, command: CommandObject):
+    await safe_delete(message)
     if not is_admin(message.from_user.id):
-        return await message.answer("⛔ Нет доступа")
+        return
 
     args = command.args.split() if command.args else []
     if len(args) < 2:
@@ -416,10 +434,11 @@ async def cmd_addstars(message: Message, command: CommandObject):
 
 @dp.message(Command("stats"))
 async def cmd_stats(message: Message):
+    await safe_delete(message)
     if not is_admin(message.from_user.id):
-        return await message.answer("⛔ Нет доступа")
+        return
 
-    result = await api_get("/api/admin/stats")
+    result = await api_get("/api/admin/stats", {"admin_id": message.from_user.id})
     if not result.get("success"):
         return await message.answer("❌ Ошибка статистики")
 
@@ -439,8 +458,9 @@ async def cmd_stats(message: Message):
 
 @dp.message(Command("broadcast"))
 async def cmd_broadcast(message: Message, command: CommandObject):
+    await safe_delete(message)
     if not is_admin(message.from_user.id):
-        return await message.answer("⛔ Нет доступа")
+        return
 
     if not command.args:
         return await message.answer("❌ Напиши текст рассылки: /broadcast Привет всем! 🔥")
@@ -455,6 +475,31 @@ async def cmd_broadcast(message: Message, command: CommandObject):
         await message.answer(f"✅ Рассылка отправлена <b>{result.get('sent', 0)}</b> пользователям")
     else:
         await message.answer("❌ " + result.get("error", "Ошибка"))
+
+
+@dp.message(Command("clear"))
+async def cmd_clear(message: Message):
+    """Админ: полностью очистить БД"""
+    await safe_delete(message)
+    if not is_admin(message.from_user.id):
+        return
+
+    # Подтверждение
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="❌ Нет, отмена", callback_data="cancel_clear")],
+        [InlineKeyboardButton(text="⚠️ ДА, удалить всё", callback_data="confirm_clear")]
+    ])
+    await message.answer(
+        "⚠️ <b>Точно удалить ВСЕХ пользователей?</b>\n\n"
+        "Будут удалены:\n"
+        "• Все пользователи\n"
+        "• Все транзакции\n"
+        "• Все рефералы\n"
+        "• Ежедневные награды\n"
+        "• Инвентарь и вайфу\n\n"
+        "<b>Это действие необратимо!</b>",
+        reply_markup=keyboard
+    )
 
 
 @dp.callback_query(F.data == "profile")
@@ -498,13 +543,55 @@ async def cb_profile(callback: CallbackQuery):
 
 @dp.callback_query(F.data == "top")
 async def cb_top(callback: CallbackQuery):
-    await cmd_top(callback.message)
+    """Топ из кнопки (редактирует текущее сообщение)"""
+    result = await api_get("/api/leaderboard", {"limit": 15})
+
+    if not result.get("success"):
+        await callback.message.edit_text("❌ Ошибка загрузки топа")
+        await callback.answer()
+        return
+
+    lb = result["leaderboard"]
+    top_text = "<b>🏆 Топ игроков Waifu Tap</b>\n\n"
+    medals = ["🥇", "🥈", "🥉"]
+    for i, entry in enumerate(lb[:15]):
+        rank = i + 1
+        medal = medals[i] if i < 3 else f"{rank}."
+        waifu_emoji = entry.get("waifu", {}).get("emoji", "🌸")
+        name = entry["name"]
+        if len(name) > 20:
+            name = name[:18] + "…"
+        coins = entry["coins"]
+        top_text += f"{medal} {waifu_emoji} <b>{name}</b> — <code>{coins:,.0f}</code> 🪙\n"
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🎮 Играть", web_app=WebAppInfo(url=config.WEBAPP_URL))]
+    ])
+
+    await callback.message.edit_text(top_text, reply_markup=keyboard)
     await callback.answer()
 
 
 @dp.callback_query(F.data == "shop")
 async def cb_shop(callback: CallbackQuery):
-    await cmd_shop(callback.message)
+    """Магазин из кнопки (редактирует текущее сообщение)"""
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🛍️ Открыть магазин",
+            web_app=WebAppInfo(url=f"{config.WEBAPP_URL}?page=shop")
+        )]
+    ])
+    await callback.message.edit_text(
+        "🛍️ <b>Магазин Waifu Tap</b>\n\n"
+        "Тут можно купить:\n"
+        "• ⚡ Бусты энергии и силы тапа\n"
+        "• 🤖 Автокликеры\n"
+        "• 👗 Скины для вайфу\n"
+        "• 🌸 Новых персонажей\n"
+        "• 💎 Монеты и Stars\n\n"
+        "Нажми кнопку, чтобы открыть магазин!",
+        reply_markup=keyboard
+    )
     await callback.answer()
 
 
@@ -623,6 +710,28 @@ async def cb_claim_daily(callback: CallbackQuery):
 @dp.callback_query(F.data == "already_claimed")
 async def cb_already_claimed(callback: CallbackQuery):
     await callback.answer("Ты уже получил награду сегодня! Возвращайся завтра 🌸", show_alert=True)
+
+
+@dp.callback_query(F.data == "confirm_clear")
+async def cb_confirm_clear(callback: CallbackQuery):
+    """Подтверждение очистки БД"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Нет доступа", show_alert=True)
+        return
+
+    result = await api_post("/api/admin/clear", {"admin_id": callback.from_user.id})
+    if result.get("success"):
+        await callback.message.edit_text("✅ <b>База данных полностью очищена!</b>\n\nВсе пользователи удалены.")
+    else:
+        await callback.message.edit_text("❌ Ошибка: " + result.get("error", "Неизвестная"))
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "cancel_clear")
+async def cb_cancel_clear(callback: CallbackQuery):
+    """Отмена очистки БД"""
+    await callback.message.edit_text("✅ Очистка отменена.")
+    await callback.answer()
 
 
 # ─── Старт бота ───

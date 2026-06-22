@@ -574,15 +574,16 @@ async def get_leaderboard(limit: int = 50):
         await db.close()
 
 async def claim_daily_reward(telegram_id: int) -> dict:
-    """Ежедневная награда"""
+    """Ежедневная награда (с защитой от пропусков)"""
     db = await get_db()
     try:
         user = await get_user_by_telegram_id(telegram_id)
         if not user:
             return {"success": False, "error": "User not found"}
         
-        # Проверяем, получал ли сегодня
         today = datetime.utcnow().strftime("%Y-%m-%d")
+        
+        # Проверяем, получал ли сегодня
         cursor = await db.execute(
             "SELECT COUNT(*) FROM daily_rewards WHERE user_id = ? AND date(claimed_at) = ?",
             (user["id"], today)
@@ -592,13 +593,26 @@ async def claim_daily_reward(telegram_id: int) -> dict:
         if already_claimed:
             return {"success": False, "error": "already_claimed", "message": "Ты уже получил награду сегодня!"}
         
-        # Считаем день
+        # Определяем день с учётом пропусков
         cursor = await db.execute(
-            "SELECT MAX(day) FROM daily_rewards WHERE user_id = ?",
+            "SELECT day, claimed_at FROM daily_rewards WHERE user_id = ? ORDER BY claimed_at DESC LIMIT 1",
             (user["id"],)
         )
-        last_day = (await cursor.fetchone())[0] or 0
-        new_day = min(last_day + 1, 7)  # Дни с 1 по 7, потом сбрасывается
+        last = await cursor.fetchone()
+        
+        yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        if last is None:
+            # Первый раз
+            new_day = 1
+        else:
+            last_claim_date = datetime.fromisoformat(last["claimed_at"]).strftime("%Y-%m-%d")
+            if last_claim_date == yesterday or last_claim_date == today:
+                # Стрека продолжается (или сегодня уже был, но мы это отсекли выше)
+                new_day = min(last["day"] + 1, 7)
+            else:
+                # Пропуск — сбрасываем на день 1
+                new_day = 1
         
         # Награда
         rewards = {
@@ -633,7 +647,7 @@ async def claim_daily_reward(telegram_id: int) -> dict:
         await db.close()
 
 async def get_daily_status(telegram_id: int) -> dict:
-    """Статус ежедневной награды"""
+    """Статус ежедневной награды (с учётом пропусков)"""
     db = await get_db()
     try:
         user = await get_user_by_telegram_id(telegram_id)
@@ -641,17 +655,33 @@ async def get_daily_status(telegram_id: int) -> dict:
             return {"available": False}
         
         today = datetime.utcnow().strftime("%Y-%m-%d")
+        yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+        
         cursor = await db.execute(
             "SELECT COUNT(*) FROM daily_rewards WHERE user_id = ? AND date(claimed_at) = ?",
             (user["id"], today)
         )
         claimed_today = (await cursor.fetchone())[0] > 0
         
+        # Определяем текущий день с учётом пропусков
         cursor = await db.execute(
-            "SELECT MAX(day) FROM daily_rewards WHERE user_id = ?",
+            "SELECT day, claimed_at FROM daily_rewards WHERE user_id = ? ORDER BY claimed_at DESC LIMIT 1",
             (user["id"],)
         )
-        current_day = (await cursor.fetchone())[0] or 0
+        last = await cursor.fetchone()
+        
+        if last is None:
+            current_day = 0
+        else:
+            last_claim_date = datetime.fromisoformat(last["claimed_at"]).strftime("%Y-%m-%d")
+            if last_claim_date == today:
+                current_day = last["day"]
+            elif last_claim_date == yesterday:
+                current_day = last["day"]
+            else:
+                # Пропуск — сброс
+                current_day = 0
+        
         next_day = min(current_day + 1, 7)
         
         return {
@@ -756,6 +786,24 @@ WAIFU_BONUSES = {
     7: {"tap_multiplier": 5,   "max_energy_bonus": 0,   "energy_regen": 0, "auto_taps": 0},  # Зеро: x5
     8: {"tap_multiplier": 1,   "max_energy_bonus": 0,   "energy_regen": 0, "auto_taps": 5},  # Фрирен: +5 автотапов
 }
+
+async def clear_all_users():
+    """Полностью очистить всех пользователей (для админа)"""
+    db = await get_db()
+    try:
+        await db.executescript("""
+            DELETE FROM transactions;
+            DELETE FROM referrals;
+            DELETE FROM daily_rewards;
+            DELETE FROM user_inventory;
+            DELETE FROM owned_waifus;
+            DELETE FROM users;
+        """)
+        await db.commit()
+        return {"success": True, "message": "Все пользователи удалены"}
+    finally:
+        await db.close()
+
 
 async def apply_waifu_bonuses(user_id: int, waifu_id: int):
     """Применить бонусы вайфу к пользователю"""

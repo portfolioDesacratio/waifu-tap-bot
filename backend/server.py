@@ -7,7 +7,9 @@ import hmac
 import hashlib
 import os
 import sys
+import time
 from datetime import datetime
+from collections import defaultdict
 
 from aiohttp import web
 
@@ -18,6 +20,44 @@ from config import config
 from backend.database import *
 
 routes = web.RouteTableDef()
+
+
+# ─── Anti-cheat: Rate limiter ───
+# Структура: {telegram_id: {"taps": [(timestamp, ...)], "banned_until": timestamp}}
+RATE_LIMIT_STORE: dict[int, dict] = defaultdict(lambda: {"taps": [], "banned_until": 0})
+RATE_LIMIT_TAPS = 10       # макс тапов
+RATE_LIMIT_WINDOW = 1.0    # за 1 секунду
+RATE_LIMIT_BAN = 60.0      # бан на 60 секунд
+
+
+def check_rate_limit(telegram_id: int) -> dict:
+    """Проверяет, не превысил ли пользователь лимит тапов.
+    Возвращает {"ok": True/False, "reason": str, "ban_remaining": seconds}"""
+    now = time.time()
+    record = RATE_LIMIT_STORE[telegram_id]
+
+    # Проверяем, не забанен ли
+    if record["banned_until"] > now:
+        remaining = int(record["banned_until"] - now)
+        return {"ok": False, "reason": f"rate_limited", "ban_remaining": remaining}
+
+    # Очищаем старые тапы (старше окна)
+    record["taps"] = [t for t in record["taps"] if now - t < RATE_LIMIT_WINDOW]
+
+    # Проверяем лимит
+    if len(record["taps"]) >= RATE_LIMIT_TAPS:
+        record["banned_until"] = now + RATE_LIMIT_BAN
+        record["taps"] = []
+        return {"ok": False, "reason": "rate_limited", "ban_remaining": int(RATE_LIMIT_BAN)}
+
+    return {"ok": True}
+
+
+def record_tap(telegram_id: int):
+    """Записать тап в хранилище лимитов"""
+    now = time.time()
+    record = RATE_LIMIT_STORE[telegram_id]
+    record["taps"].append(now)
 
 
 # ─── Валидация Telegram WebApp данных ───
@@ -97,6 +137,8 @@ async def auth(request):
         username = user_data.get("username", "")
 
         user = await get_or_create_user(telegram_id, first_name, username, referrer_id)
+        owned = await get_user_owned_waifus(user["id"])
+        user["owned_waifus"] = owned
 
         return web.json_response({"success": True, "user": user})
     except Exception as e:
@@ -105,26 +147,48 @@ async def auth(request):
 
 @routes.get("/api/user/{telegram_id}")
 async def get_user(request):
-    """Получить данные пользователя"""
+    """Получить данные пользователя (с owned_waifus)"""
     telegram_id = int(request.match_info["telegram_id"])
     user = await get_user_by_telegram_id(telegram_id)
     if not user:
         return web.json_response({"success": False, "error": "User not found"}, status=404)
 
     safe_user = {k: v for k, v in user.items() if k != "id"}
+    # Добавляем owned_waifus
+    owned = await get_user_owned_waifus(user["id"])
+    safe_user["owned_waifus"] = owned
     return web.json_response({"success": True, "user": safe_user})
 
 
 @routes.post("/api/tap")
 async def tap(request):
-    """Обработать тап"""
+    """Обработать тап (с античитом)"""
     try:
         body = await request.json()
         telegram_id = body.get("telegram_id")
         if not telegram_id:
             return web.json_response({"success": False, "error": "telegram_id required"}, status=400)
 
+        # Anti-cheat check
+        rl = check_rate_limit(telegram_id)
+        if not rl["ok"]:
+            return web.json_response({
+                "success": False,
+                "error": "rate_limited",
+                "message": f"⛔ Слишком быстро! Подожди {rl['ban_remaining']}с",
+                "ban_remaining": rl["ban_remaining"]
+            }, status=429)
+
         result = await process_tap(telegram_id)
+        
+        if result.get("success"):
+            record_tap(telegram_id)
+            result["ban_remaining"] = 0
+        else:
+            # Даже если не успешно (нет энергии), считаем попытку
+            if result.get("error") != "no_energy":
+                record_tap(telegram_id)
+
         return web.json_response(result)
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)
@@ -132,7 +196,7 @@ async def tap(request):
 
 @routes.post("/api/tap/batch")
 async def tap_batch(request):
-    """Обработать пачку тапов (для автотапа)"""
+    """Обработать пачку тапов (для автотапа, с античитом)"""
     try:
         body = await request.json()
         telegram_id = body.get("telegram_id")
@@ -140,6 +204,15 @@ async def tap_batch(request):
 
         if not telegram_id:
             return web.json_response({"success": False, "error": "telegram_id required"}, status=400)
+
+        # Anti-cheat check (batch считаем за count тапов)
+        rl = check_rate_limit(telegram_id)
+        if not rl["ok"]:
+            return web.json_response({
+                "success": False,
+                "error": "rate_limited",
+                "message": f"⛔ Слишком быстро! Подожди {rl['ban_remaining']}с"
+            }, status=429)
 
         total_earned = 0
         taps_done = 0
@@ -155,6 +228,7 @@ async def tap_batch(request):
                 energy = result.get("energy", 0)
                 max_energy = result.get("max_energy", 100)
                 combo = result.get("combo", 0)
+                record_tap(telegram_id)
             else:
                 energy = result.get("energy", 0)
                 break
@@ -472,6 +546,64 @@ async def admin_broadcast(request):
         return web.json_response({"success": False, "error": str(e)}, status=500)
 
 
+@routes.post("/api/admin/clear")
+async def admin_clear(request):
+    """Админ: полностью очистить всех пользователей"""
+    try:
+        body = await request.json()
+        admin_id = body.get("admin_id")
+        if admin_id != config.ADMIN_ID:
+            return web.json_response({"success": False, "error": "Access denied"}, status=403)
+
+        result = await clear_all_users()
+        return web.json_response(result)
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+@routes.get("/api/admin/ratelimit")
+async def admin_ratelimit(request):
+    """Админ: статус rate limit"""
+    admin_id = request.query.get("admin_id")
+    if int(admin_id or 0) != config.ADMIN_ID:
+        return web.json_response({"success": False, "error": "Access denied"}, status=403)
+
+    now = time.time()
+    banned = {}
+    for uid, rec in dict(RATE_LIMIT_STORE).items():
+        if rec["banned_until"] > now:
+            banned[str(uid)] = {
+                "banned_until": rec["banned_until"],
+                "remaining": int(rec["banned_until"] - now)
+            }
+    return web.json_response({
+        "success": True,
+        "banned_count": len(banned),
+        "banned_users": banned
+    })
+
+
+# ─── BOT REGISTRATION ───
+
+@routes.post("/api/bot/register")
+async def bot_register(request):
+    """Регистрация пользователя из бота (без HMAC, т.к. бот доверенный)"""
+    try:
+        body = await request.json()
+        telegram_id = body.get("telegram_id")
+        first_name = body.get("first_name", "")
+        username = body.get("username", "")
+        referrer_id = body.get("referrerId")
+
+        if not telegram_id:
+            return web.json_response({"success": False, "error": "telegram_id required"}, status=400)
+
+        user = await get_or_create_user(telegram_id, first_name, username, referrer_id)
+        return web.json_response({"success": True, "user": user})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
 # ─── DEV / GUEST AUTH (для теста в браузере) ───
 
 @routes.post("/api/guest/auth")
@@ -504,6 +636,8 @@ async def guest_auth(request):
             finally:
                 await db.close()
 
+        owned = await get_user_owned_waifus(user["id"])
+        user["owned_waifus"] = owned
         return web.json_response({"success": True, "user": user, "is_guest": True})
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)
