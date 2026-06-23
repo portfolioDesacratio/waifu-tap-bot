@@ -33,7 +33,7 @@ class Config:
     WEBAPP_URL: str = os.environ.get("WEBAPP_URL", "https://portfoliodesacratio.github.io/waifu-tap-temp/")
     
     # ─── API URL (для бота — на какой URL слать запросы) ───
-    API_URL: str = os.environ.get("API_URL", "https://waifutap.alwaysdata.net")
+    API_URL: str = os.environ.get("API_URL", "https://waifu-tap-bot.onrender.com")
     
     # ─── Telegram API (только из .env) ───
     TELEGRAM_API_ID: int = int(os.environ.get("TELEGRAM_API_ID", 0))

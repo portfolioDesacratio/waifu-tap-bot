@@ -18,4 +18,4 @@ services:
       - key: WEBAPP_URL
         value: https://waifu-tap-bot.onrender.com/
       - key: API_URL
-        value: https://waifutap.alwaysdata.net
+        value: https://waifu-tap-bot.onrender.com

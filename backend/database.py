@@ -140,6 +140,16 @@ async def init_db():
                 FOREIGN KEY (waifu_id) REFERENCES waifus(id) ON DELETE CASCADE,
                 UNIQUE(user_id, waifu_id)
             );
+            
+            CREATE TABLE IF NOT EXISTS user_skins (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                skin_name TEXT NOT NULL,
+                purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                is_active INTEGER DEFAULT 0,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                UNIQUE(user_id, skin_name)
+            );
         """)
         
         await db.commit()
@@ -187,34 +197,34 @@ async def seed_shop(db):
         (2, 'Усиление тапа II', 'x3 монет за каждый тап', 5000, 1, 'boost', '{"type": "coins_per_tap", "value": 3}', '👆', 2, 0, 'boosts', 2),
         (3, 'Усиление тапа III', 'x5 монет за каждый тап', 25000, 5, 'boost', '{"type": "coins_per_tap", "value": 5}', '👆', 1, 0, 'boosts', 3),
         
-        # Бусты энергии
+        # Восполнение энергии
         (4, 'Восполнение энергии', 'Мгновенно восстанавливает всю энергию', 500, 0, 'energy_refill', '{"type": "energy_refill", "value": 100}', '⚡', 0, 0, 'energy', 4),
-        (5, 'Большое восполнение', 'Мгновенно восстанавливает 200 энергии', 1500, 1, 'energy_refill', '{"type": "energy_refill", "value": 200}', '⚡', 0, 0, 'energy', 5),
         
-        # Увеличение макс энергии
-        (6, 'Энерго-ядро I', '+25 к макс энергии', 2000, 1, 'max_energy', '{"type": "max_energy", "value": 25}', '💎', 5, 0, 'energy', 6),
-        (7, 'Энерго-ядро II', '+50 к макс энергии', 5000, 3, 'max_energy', '{"type": "max_energy", "value": 50}', '💎', 3, 0, 'energy', 7),
-        (8, 'Энерго-ядро III', '+100 к макс энергии', 15000, 10, 'max_energy', '{"type": "max_energy", "value": 100}', '💎', 2, 0, 'energy', 8),
+        # Постоянные энерго-ядра (+к макс энергии навсегда)
+        (5, 'Энерго-ядро I', 'Постоянно +25 к макс энергии', 2000, 1, 'max_energy', '{"type": "max_energy", "value": 25}', '💎', 5, 0, 'energy', 5),
+        (6, 'Энерго-ядро II', 'Постоянно +50 к макс энергии', 5000, 3, 'max_energy', '{"type": "max_energy", "value": 50}', '💎', 3, 0, 'energy', 6),
+        (7, 'Энерго-ядро III', 'Постоянно +100 к макс энергии', 15000, 10, 'max_energy', '{"type": "max_energy", "value": 100}', '💎', 2, 0, 'energy', 7),
+        (8, 'Энерго-ядро MAX', 'Постоянно +250 к макс энергии', 35000, 20, 'max_energy', '{"type": "max_energy", "value": 250}', '💠', 1, 0, 'energy', 8),
         
         # Авто-тап
         (9, 'Автокликер I', 'Автоматически тапает раз в 5 секунд', 5000, 3, 'auto_tap', '{"type": "auto_tap", "level": 1, "interval": 5}', '🤖', 1, 0, 'auto', 9),
         (10, 'Автокликер II', 'Автоматически тапает раз в 3 секунды', 15000, 10, 'auto_tap', '{"type": "auto_tap", "level": 2, "interval": 3}', '🤖', 1, 0, 'auto', 10),
         (11, 'Автокликер III', 'Автоматически тапает раз в 1 секунду', 50000, 25, 'auto_tap', '{"type": "auto_tap", "level": 3, "interval": 1}', '🤖', 1, 0, 'auto', 11),
         
-        # Регенерация энергии
-        (12, 'Регенерация II', 'Энергия восстанавливается в 2 раза быстрее', 3000, 2, 'energy_regen', '{"type": "energy_regen", "level": 2}', '🔄', 1, 0, 'energy', 12),
-        (13, 'Регенерация III', 'Энергия восстанавливается в 3 раза быстрее', 8000, 5, 'energy_regen', '{"type": "energy_regen", "level": 3}', '🔄', 1, 0, 'energy', 13),
+        # Постоянная регенерация
+        (12, 'Ускорение регена I', 'Энергия восстанавливается навсегда ×2 быстрее', 3000, 2, 'energy_regen', '{"type": "energy_regen", "level": 2}', '🔄', 1, 0, 'energy', 12),
+        (13, 'Ускорение регена II', 'Энергия восстанавливается навсегда ×3 быстрее', 8000, 5, 'energy_regen', '{"type": "energy_regen", "level": 3}', '🔄', 1, 0, 'energy', 13),
         
-        # Множитель прибыли (на время)
+        # Временные множители
         (14, 'Удача вайфу (15 мин)', 'x2 ко всем монетам на 15 минут', 3000, 2, 'temporary_boost', '{"type": "profit_multiplier", "value": 2, "duration": 900}', '🍀', 0, 0, 'boosts', 14),
         (15, 'Благословение (30 мин)', 'x3 ко всем монетам на 30 минут', 10000, 8, 'temporary_boost', '{"type": "profit_multiplier", "value": 3, "duration": 1800}', '🌟', 0, 0, 'boosts', 15),
         
-        # Скины (косметика) — за Stars
-        (16, 'Летнее платье', 'Скин: Сакура в летнем платье', 0, 15, 'skin', '{"type": "skin", "waifu_id": 1, "name": "summer_dress"}', '👗', 1, 0, 'skins', 16),
-        (17, 'Кимоно', 'Скин: Сакура в кимоно', 0, 30, 'skin', '{"type": "skin", "waifu_id": 1, "name": "kimono"}', '🎎', 1, 0, 'skins', 17),
-        (18, 'Школьная форма', 'Скин: Сакура в школьной форме', 0, 20, 'skin', '{"type": "skin", "waifu_id": 1, "name": "school"}', '📚', 1, 0, 'skins', 18),
+        # Скины — теперь на ЛЮБУЮ вайфу (waifu_id=0 = универсальный)
+        (16, 'Летнее платье', 'Скин для любой вайфу — летнее платье', 0, 15, 'skin', '{"type": "skin", "name": "summer_dress", "label": "🌺 Летнее платье"}', '👗', 1, 0, 'skins', 16),
+        (17, 'Кимоно', 'Скин для любой вайфу — кимоно', 0, 30, 'skin', '{"type": "skin", "name": "kimono", "label": "🎎 Кимоно"}', '🎎', 1, 0, 'skins', 17),
+        (18, 'Школьная форма', 'Скин для любой вайфу — школьная форма', 0, 20, 'skin', '{"type": "skin", "name": "school", "label": "📚 Школьная форма"}', '📚', 1, 0, 'skins', 18),
         
-        # Премиум-валюты
+        # Пакеты монет
         (19, '1000 монет', 'Пополнение кошелька монетами', 0, 1, 'coins_pack', '{"type": "coins", "value": 1000}', '🪙', 0, 0, 'specials', 19),
         (20, '10000 монет', 'Большой пакет монет', 0, 8, 'coins_pack', '{"type": "coins", "value": 10000}', '💰', 0, 0, 'specials', 20),
         (21, '100000 монет', 'Мега-пакет монет', 0, 70, 'coins_pack', '{"type": "coins", "value": 100000}', '💎', 0, 0, 'specials', 21),
@@ -483,7 +493,7 @@ async def buy_item(telegram_id: int, item_id: int, payment_method: str = "coins"
             )
         
         # Добавляем в инвентарь (для бустов/скинов)
-        if item_type in ("boost", "auto_tap", "energy_regen", "temporary_boost", "skin"):
+        if item_type in ("boost", "auto_tap", "energy_regen", "temporary_boost"):
             # Проверяем, есть ли уже такой предмет
             cursor = await db.execute(
                 "SELECT id, quantity FROM user_inventory WHERE user_id = ? AND item_id = ?",
@@ -518,6 +528,27 @@ async def buy_item(telegram_id: int, item_id: int, payment_method: str = "coins"
                 await db.execute(
                     "UPDATE users SET coins_per_tap = coins_per_tap * ? WHERE id = ?",
                     (boost_mult / 2, user["id"])  # хитрость: boost I = x2, поэтому делим на 2
+                )
+        
+        # Скины — в отдельную таблицу wardrobe
+        if item_type == "skin":
+            skin_name = item_value.get("name", "unknown")
+            # Проверяем, есть ли уже
+            cursor = await db.execute(
+                "SELECT id FROM user_skins WHERE user_id = ? AND skin_name = ?",
+                (user["id"], skin_name)
+            )
+            existing_skin = await cursor.fetchone()
+            if not existing_skin:
+                await db.execute(
+                    "INSERT INTO user_skins (user_id, skin_name, is_active) VALUES (?, ?, 1)",
+                    (user["id"], skin_name)
+                )
+            else:
+                # Включаем, если был куплен но выключен
+                await db.execute(
+                    "UPDATE user_skins SET is_active = 1 WHERE user_id = ? AND skin_name = ?",
+                    (user["id"], skin_name)
                 )
         
         # Записываем транзакцию
@@ -614,17 +645,17 @@ async def claim_daily_reward(telegram_id: int) -> dict:
                 # Пропуск — сбрасываем на день 1
                 new_day = 1
         
-        # Награда
+        # Награда (новые — крупнее)
         rewards = {
-            1: {"coins": 100, "stars": 0},
-            2: {"coins": 200, "stars": 0},
-            3: {"coins": 300, "stars": 0},
-            4: {"coins": 500, "stars": 1},
-            5: {"coins": 800, "stars": 0},
-            6: {"coins": 1200, "stars": 2},
-            7: {"coins": 2000, "stars": 5},
+            1: {"coins": 5000, "stars": 0},
+            2: {"coins": 7000, "stars": 0},
+            3: {"coins": 10000, "stars": 0},
+            4: {"coins": 12500, "stars": 1},
+            5: {"coins": 15000, "stars": 2},
+            6: {"coins": 17500, "stars": 3},
+            7: {"coins": 20000, "stars": 5},
         }
-        reward = rewards.get(new_day, {"coins": 100, "stars": 0})
+        reward = rewards.get(new_day, {"coins": 5000, "stars": 0})
         
         await db.execute(
             "UPDATE users SET coins = coins + ?, stars = stars + ? WHERE id = ?",
@@ -684,11 +715,22 @@ async def get_daily_status(telegram_id: int) -> dict:
         
         next_day = min(current_day + 1, 7)
         
+        rewards_map = {
+            1: {"coins": 5000, "stars": 0},
+            2: {"coins": 7000, "stars": 0},
+            3: {"coins": 10000, "stars": 0},
+            4: {"coins": 12500, "stars": 1},
+            5: {"coins": 15000, "stars": 2},
+            6: {"coins": 17500, "stars": 3},
+            7: {"coins": 20000, "stars": 5},
+        }
+        
         return {
             "available": not claimed_today,
             "current_day": current_day,
             "next_day": next_day,
-            "claimed_today": claimed_today
+            "claimed_today": claimed_today,
+            "rewards": rewards_map
         }
     finally:
         await db.close()
@@ -797,6 +839,7 @@ async def clear_all_users():
             DELETE FROM daily_rewards;
             DELETE FROM user_inventory;
             DELETE FROM owned_waifus;
+            DELETE FROM user_skins;
             DELETE FROM users;
         """)
         await db.commit()
@@ -882,6 +925,50 @@ async def waifu_unlock(telegram_id: int, waifu_id: int) -> dict:
             "waifu_emoji": waifu["emoji"],
             "already_owned": already_owned
         }
+    finally:
+        await db.close()
+
+
+# ─── ГАРДЕРОБ (скины) ───
+
+async def get_user_skins(telegram_id: int) -> list:
+    """Получить все скины пользователя"""
+    db = await get_db()
+    try:
+        user = await get_user_by_telegram_id(telegram_id)
+        if not user:
+            return []
+        cursor = await db.execute(
+            "SELECT skin_name, is_active, purchased_at FROM user_skins WHERE user_id = ? ORDER BY purchased_at DESC",
+            (user["id"],)
+        )
+        rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        await db.close()
+
+async def toggle_skin(telegram_id: int, skin_name: str, active: bool) -> dict:
+    """Включить/выключить скин"""
+    db = await get_db()
+    try:
+        user = await get_user_by_telegram_id(telegram_id)
+        if not user:
+            return {"success": False, "error": "User not found"}
+        
+        cursor = await db.execute(
+            "SELECT id FROM user_skins WHERE user_id = ? AND skin_name = ?",
+            (user["id"], skin_name)
+        )
+        skin = await cursor.fetchone()
+        if not skin:
+            return {"success": False, "error": "Скин не найден"}
+        
+        await db.execute(
+            "UPDATE user_skins SET is_active = ? WHERE user_id = ? AND skin_name = ?",
+            (1 if active else 0, user["id"], skin_name)
+        )
+        await db.commit()
+        return {"success": True, "skin": skin_name, "active": active}
     finally:
         await db.close()
 
