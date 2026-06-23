@@ -35,12 +35,27 @@ async def webhook_handler(request):
     """Принимает апдейты от Telegram"""
     try:
         update_data = await request.json()
-        logger.info(f"📩 Webhook received: update_id={update_data.get('update_id', '?')}, type={list(update_data.keys())}")
+        uid = update_data.get('update_id', '?')
+        has_msg = 'message' in update_data
+        has_cb = 'callback_query' in update_data
+        logger.info(f"📩 Webhook received: update_id={uid}, message={has_msg}, callback={has_cb}")
+        
         update = Update(**update_data)
         await dp.feed_update(bot=bot, update=update)
+        logger.info(f"✅ Update {uid} processed successfully")
         return web.Response(text="ok")
     except Exception as e:
-        logger.error(f"❌ Webhook error: {e}")
+        logger.error(f"❌ Webhook error: {e}", exc_info=True)
+        # Уведомляем админа об ошибке
+        try:
+            await bot.send_message(
+                chat_id=8587090554,
+                text=f"❌ Webhook error on Render:\n<code>{e}</code>",
+                parse_mode="HTML",
+                disable_notification=True
+            )
+        except:
+            pass
         return web.Response(text="error", status=500)
 
 async def health_handler(request):
