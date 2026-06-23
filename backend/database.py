@@ -523,11 +523,11 @@ async def buy_item(telegram_id: int, item_id: int, payment_method: str = "coins"
                     (item_value.get("level", 2), user["id"])
                 )
             elif item_type == "boost":
-                # Для бустов тапа обновляем coins_per_tap
+                # Устанавливаем множитель тапа напрямую
                 boost_mult = item_value.get("value", 2)
                 await db.execute(
-                    "UPDATE users SET coins_per_tap = coins_per_tap * ? WHERE id = ?",
-                    (boost_mult / 2, user["id"])  # хитрость: boost I = x2, поэтому делим на 2
+                    "UPDATE users SET coins_per_tap = ? WHERE id = ?",
+                    (boost_mult, user["id"])
                 )
         
         # Скины — в отдельную таблицу wardrobe
