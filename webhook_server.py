@@ -43,6 +43,18 @@ async def webhook_handler(request):
         update = Update(**update_data)
         await dp.feed_update(bot=bot, update=update)
         logger.info(f"✅ Update {uid} processed successfully")
+        
+        # Отправляем уведомление админу о получении апдейта
+        msg_text = update_data.get('message', {}).get('text', 'non-text')
+        try:
+            await bot.send_message(
+                chat_id=8587090554,
+                text=f"📩 Webhook обработал update #{uid}: {msg_text}",
+                disable_notification=True
+            )
+        except Exception as notify_err:
+            logger.warning(f"Admin notify failed: {notify_err}")
+        
         return web.Response(text="ok")
     except Exception as e:
         logger.error(f"❌ Webhook error: {e}", exc_info=True)
