@@ -226,8 +226,8 @@ async def seed_shop(db):
         
         # Пакеты монет (звёздные цены: большие паки выгоднее)
         (19, '1000 монет', 'Пополнение кошелька монетами', 0, 1, 'coins_pack', '{"type": "coins", "value": 1000}', '🪙', 0, 0, 'specials', 19),
-        (20, '10000 монет', 'Большой пакет монет', 0, 5, 'coins_pack', '{"type": "coins", "value": 10000}', '💰', 0, 0, 'specials', 20),
-        (21, '100000 монет', 'Мега-пакет монет', 0, 35, 'coins_pack', '{"type": "coins", "value": 100000}', '💎', 0, 0, 'specials', 21),
+        (20, '10000 монет', 'Большой пакет монет', 0, 7, 'coins_pack', '{"type": "coins", "value": 10000}', '💰', 0, 0, 'specials', 20),
+        (21, '100000 монет', 'Мега-пакет монет', 0, 50, 'coins_pack', '{"type": "coins", "value": 100000}', '💎', 0, 0, 'specials', 21),
     ]
     await db.executemany(
         """INSERT INTO shop_items 
