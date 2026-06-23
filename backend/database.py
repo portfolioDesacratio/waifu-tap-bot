@@ -224,10 +224,10 @@ async def seed_shop(db):
         (17, 'Кимоно', 'Скин для любой вайфу — кимоно', 0, 30, 'skin', '{"type": "skin", "name": "kimono", "label": "🎎 Кимоно"}', '🎎', 1, 0, 'skins', 17),
         (18, 'Школьная форма', 'Скин для любой вайфу — школьная форма', 0, 20, 'skin', '{"type": "skin", "name": "school", "label": "📚 Школьная форма"}', '📚', 1, 0, 'skins', 18),
         
-        # Пакеты монет
+        # Пакеты монет (звёздные цены: большие паки выгоднее)
         (19, '1000 монет', 'Пополнение кошелька монетами', 0, 1, 'coins_pack', '{"type": "coins", "value": 1000}', '🪙', 0, 0, 'specials', 19),
-        (20, '10000 монет', 'Большой пакет монет', 0, 8, 'coins_pack', '{"type": "coins", "value": 10000}', '💰', 0, 0, 'specials', 20),
-        (21, '100000 монет', 'Мега-пакет монет', 0, 70, 'coins_pack', '{"type": "coins", "value": 100000}', '💎', 0, 0, 'specials', 21),
+        (20, '10000 монет', 'Большой пакет монет', 0, 5, 'coins_pack', '{"type": "coins", "value": 10000}', '💰', 0, 0, 'specials', 20),
+        (21, '100000 монет', 'Мега-пакет монет', 0, 35, 'coins_pack', '{"type": "coins", "value": 100000}', '💎', 0, 0, 'specials', 21),
     ]
     await db.executemany(
         """INSERT INTO shop_items 
@@ -492,8 +492,8 @@ async def buy_item(telegram_id: int, item_id: int, payment_method: str = "coins"
                 (coins_value, coins_value, user["id"])
             )
         
-        # Добавляем в инвентарь (для бустов/скинов)
-        if item_type in ("boost", "auto_tap", "energy_regen", "temporary_boost"):
+        # Добавляем в инвентарь (для бустов и ограниченных предметов)
+        if item_type in ("boost", "auto_tap", "energy_regen", "temporary_boost", "max_energy"):
             # Проверяем, есть ли уже такой предмет
             cursor = await db.execute(
                 "SELECT id, quantity FROM user_inventory WHERE user_id = ? AND item_id = ?",

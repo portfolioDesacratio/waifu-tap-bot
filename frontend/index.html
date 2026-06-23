@@ -40,11 +40,6 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
 @keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-30px)}}
 @keyframes float4{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,20px)}}
 
-/* ─── SAKURA PETAL FALL (CSS backup for canvas) ─── */
-.sakura-petal{position:fixed;pointer-events:none;z-index:1;opacity:0.3;font-size:14px;
-  animation:sakuraFall linear infinite;}
-@keyframes sakuraFall{0%{transform:translateY(-20px) rotate(0deg) scale(0.8);opacity:0;}10%{opacity:0.4;}100%{transform:translateY(110vh) rotate(720deg) scale(1.2);opacity:0;}}
-
 /* ─── GLASS EFFECT ─── */
 .glass{border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
 
@@ -115,13 +110,41 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
 
 /* ─── SHOP ─── */
 .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:16px;}
-.shop-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:16px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;}
+.shop-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:16px 14px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:150px;}
 .shop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);}
 .shop-card:active{transform:scale(0.94);background:rgba(245,194,224,0.03);border-color:rgba(245,194,224,0.08);}
-.shop-card .s-icon{font-size:30px;margin-bottom:4px;}
-.shop-card .s-name{font-size:13px;font-weight:800;color:#eee;font-family:'Unbounded',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
-.shop-card .s-desc{font-size:9px;color:rgba(255,255,255,0.3);font-weight:700;margin-top:3px;line-height:1.4;text-transform:uppercase;letter-spacing:0.5px;}
-.shop-card .s-price{font-size:14px;font-weight:900;color:#ffd700;margin-top:8px;text-shadow:0 0 10px rgba(255,215,0,0.1);}
+.shop-card .s-icon{font-size:32px;margin-bottom:6px;display:block;}
+.shop-card .s-name{font-size:12px;font-weight:800;color:#eee;font-family:'Unbounded',sans-serif;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;min-height:2.6em;max-width:100%;}
+.shop-card .s-desc{font-size:8px;color:rgba(255,255,255,0.25);font-weight:700;margin-top:4px;line-height:1.3;text-transform:uppercase;letter-spacing:0.3px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1;}
+.shop-card .s-price{font-size:14px;font-weight:900;color:#ffd700;margin-top:auto;padding-top:8px;text-shadow:0 0 10px rgba(255,215,0,0.1);letter-spacing:0.5px;display:flex;gap:6px;flex-wrap:wrap;}
+.shop-card .s-price .price-coins{color:#ffd700;}
+.shop-card .s-price .price-stars{color:#c084fc;}
+
+/* ─── SHOP CATEGORY HEADER ─── */
+.shop-cat{padding:8px 2px 6px;font-size:11px;font-weight:800;font-family:'Unbounded',sans-serif;color:rgba(255,255,255,0.15);letter-spacing:1px;text-transform:uppercase;grid-column:1/-1;border-bottom:1px solid rgba(255,255,255,0.03);margin-top:4px;}
+
+/* ─── WARDROBE ─── */
+.wardrobe-grid{display:flex;flex-direction:column;gap:8px;padding-bottom:16px;}
+.skin-card{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:16px;transition:all 0.25s;gap:12px;}
+.skin-card:active{transform:scale(0.97);}
+.skin-card.active{border-color:rgba(255,105,180,0.2);background:rgba(255,105,180,0.04);}
+.skin-card .sk-icon{font-size:28px;margin-right:4px;}
+.skin-card .sk-info{flex:1;min-width:0;}
+.skin-card .sk-name{font-size:14px;font-weight:700;color:#eee;font-family:'Unbounded',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.skin-card .sk-desc{font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;}
+.skin-card .sk-action{flex-shrink:0;}
+.skin-btn{border:none;padding:7px 16px;border-radius:20px;font-size:11px;font-weight:800;cursor:pointer;transition:all 0.25s;font-family:'Inter',sans-serif;letter-spacing:0.3px;}
+.skin-btn.active{background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.15);}
+.skin-btn.inactive{background:rgba(255,215,0,0.08);color:#ffd700;border:1px solid rgba(255,215,0,0.12);}
+.skin-btn:active{transform:scale(0.90);}
+
+/* ─── SHOP BUY MODAL ─── */
+.buy-choice{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.buy-choice .buy-btn{font-size:13px;padding:12px 16px;border-radius:16px;border:none;cursor:pointer;font-weight:800;font-family:'Inter',sans-serif;transition:all 0.25s;letter-spacing:0.3px;}
+.buy-choice .buy-btn:active{transform:scale(0.95);}
+.buy-choice .buy-btn.coins{background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,200,0,0.06));color:#ffd700;border:1px solid rgba(255,215,0,0.10);}
+.buy-choice .buy-btn.stars{background:linear-gradient(135deg,rgba(192,132,252,0.12),rgba(168,85,247,0.06));color:#c084fc;border:1px solid rgba(192,132,252,0.10);}
+.buy-choice .buy-cancel{background:none;border:none;color:rgba(255,255,255,0.2);font-size:12px;padding:8px;cursor:pointer;font-weight:700;}
 
 /* ─── WAIFUS ─── */
 .waifu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -344,7 +367,7 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
   .shop-grid{grid-template-columns:1fr 1fr 1fr;gap:12px;}
   .shop-card{padding:18px;border-radius:20px;}
   .shop-card .s-icon{font-size:34px;}
-  .shop-card .s-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+  .shop-card .s-name{font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.6em;}
   .waifu-grid{grid-template-columns:1fr 1fr;gap:14px;}
   .waifu-card .w-img-wrap{height:160px;}
   .daily-grid{grid-template-columns:repeat(7,1fr);gap:10px;}
@@ -440,7 +463,7 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
   .shop-card:hover{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);
     transform:translateY(-2px);}
   .shop-card .s-icon{font-size:36px;}
-  .shop-card .s-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+  .shop-card .s-name{font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.6em;}
   .shop-card .s-desc{font-size:10px;}
   .shop-card .s-price{font-size:15px;}
 
@@ -919,18 +942,43 @@ async function loadShop() {
 function renderShop() {
   const c = document.getElementById('shopContent');
   if (!shopItems.length) { c.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.15);padding:30px;font-weight:800;font-family:Unbounded,sans-serif;">Магазин пуст</p>'; return; }
-  c.innerHTML = '<div class="shop-grid">' + shopItems.map(item => {
-    let priceHtml = '';
-    if (item.price_coins > 0) priceHtml += `🪙${fmtCoin(item.price_coins)}`;
-    if (item.price_stars > 0) priceHtml += (priceHtml ? ' ' : '') + `⭐${fmtCoin(item.price_stars)}`;
-    if (!priceHtml) priceHtml = '🪙0';
-    return `<div class="shop-card" onclick="buyItem(${item.id})">
-      <div class="s-icon">${item.emoji || '📦'}</div>
-      <div class="s-name">${item.name}</div>
-      <div class="s-desc">${item.description || ''}</div>
-      <div class="s-price">${priceHtml}</div>
-    </div>`;
-  }).join('') + '</div>';
+  
+  // Группируем по категориям
+  const catLabels = {
+    'boosts': '🚀 Бусты',
+    'energy': '⚡ Энергия',
+    'auto': '🤖 Авто-тап',
+    'skins': '👗 Скины',
+    'specials': '💰 Пакеты монет',
+  };
+  const catOrder = ['boosts', 'energy', 'auto', 'skins', 'specials'];
+  const grouped = {};
+  for (const item of shopItems) {
+    const cat = item.category || 'boosts';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  }
+  
+  let html = '<div class="shop-grid">';
+  for (const cat of catOrder) {
+    if (!grouped[cat] || !grouped[cat].length) continue;
+    const label = catLabels[cat] || cat;
+    html += `<div class="shop-cat">${label}</div>`;
+    for (const item of grouped[cat]) {
+      let priceHtml = '';
+      if (item.price_coins > 0) priceHtml += `<span class="price-coins">🪙${fmtCoin(item.price_coins)}</span>`;
+      if (item.price_stars > 0) priceHtml += `<span class="price-stars">⭐${fmtCoin(item.price_stars)}</span>`;
+      if (!priceHtml) priceHtml = '<span class="price-coins">🪙0</span>';
+      html += `<div class="shop-card" onclick="buyItem(${item.id})">
+        <div class="s-icon">${item.emoji || '📦'}</div>
+        <div class="s-name">${item.name}</div>
+        <div class="s-desc">${item.description || ''}</div>
+        <div class="s-price">${priceHtml}</div>
+      </div>`;
+    }
+  }
+  html += '</div>';
+  c.innerHTML = html;
 }
 
 async function buyItem(itemId) {
@@ -941,14 +989,14 @@ async function buyItem(itemId) {
   // Если есть обе цены — предлагаем выбор
   if (item.price_coins > 0 && item.price_stars > 0) {
     showModal('🛒 ' + item.name,
-      `<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-        <button class="daily-btn" onclick="confirmBuy(${itemId},'coins')" style="font-size:13px;padding:12px;">
+      `<div class="buy-choice">
+        <button class="buy-btn coins" onclick="confirmBuy(${itemId},'coins')">
           🪙 ${fmtCoin(item.price_coins)} монет
         </button>
-        <button class="daily-btn" onclick="confirmBuy(${itemId},'stars')" style="font-size:13px;padding:12px;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1));">
+        <button class="buy-btn stars" onclick="confirmBuy(${itemId},'stars')">
           ⭐ ${item.price_stars} Stars
         </button>
-        <button onclick="closeModal()" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:12px;padding:8px;cursor:pointer;">Отмена</button>
+        <button class="buy-cancel" onclick="closeModal()">Отмена</button>
       </div>`
     );
     return;
@@ -1103,7 +1151,7 @@ async function claimDaily() {
       body: JSON.stringify({ telegram_id: state.user.telegram_id }) });
     const d = await r.json();
     if (d.success) {
-      showModal('🎉 Ежедневная награда!', `🪙 +${d.coins} монет${d.stars > 0 ? '\n⭐ +' + d.stars + ' Stars' : ''}`);
+      showModal('🎉 Ежедневная награда!', `🪙 +${fmtCoin(d.coins)} монет${d.stars > 0 ? '<br>⭐ +' + d.stars + ' Stars' : ''}`);
       state.coins += d.coins || 0;
       state.stars += d.stars || 0;
       updateHUD();
@@ -1137,17 +1185,20 @@ function renderWardrobe() {
     'kimono': { emoji: '🎎', label: 'Кимоно', desc: '🎎 Японский стиль' },
     'school': { emoji: '📚', label: 'Школьная форма', desc: '📚 Милая школьница' },
   };
-  c.innerHTML = '<div style="padding:4px 0;">' + userSkins.map(s => {
+  c.innerHTML = '<div class="wardrobe-grid">' + userSkins.map(s => {
     const meta = skinMeta[s.skin_name] || { emoji: '👗', label: s.skin_name, desc: '' };
     const active = s.is_active === 1;
-    return `<div class="skin-card" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-radius:14px;border:1px solid ${active?'rgba(255,105,180,0.2)':'rgba(255,255,255,0.04)'};">
-      <div>
-        <div style="font-size:16px;font-weight:700;font-family:Unbounded,sans-serif;">${meta.emoji} ${meta.label}</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:2px;">${meta.desc}</div>
+    return `<div class="skin-card${active?' active':''}">
+      <div class="sk-icon">${meta.emoji}</div>
+      <div class="sk-info">
+        <div class="sk-name">${meta.label}</div>
+        <div class="sk-desc">${meta.desc}</div>
       </div>
-      <button class="w-badge ${active?'free-badge':'locked-badge'}" onclick="event.stopPropagation();toggleSkin('${s.skin_name}', ${active?0:1})" style="cursor:pointer;border:none;padding:6px 14px;border-radius:20px;font-size:11px;">
-        ${active ? '✅ Надет' : '👤 Надеть'}
-      </button>
+      <div class="sk-action">
+        <button class="skin-btn ${active?'active':'inactive'}" onclick="event.stopPropagation();toggleSkin('${s.skin_name}', ${active?0:1})">
+          ${active ? '✅ Надет' : '👤 Надеть'}
+        </button>
+      </div>
     </div>`;
   }).join('') + '</div>';
 }
