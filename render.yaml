@@ -16,6 +16,6 @@ services:
       - key: ADMIN_ID
         sync: false
       - key: WEBAPP_URL
-        value: https://portfoliodesacratio.github.io/waifu-tap-temp/
+        value: https://waifu-tap-bot.onrender.com/
       - key: API_URL
         value: https://waifutap.alwaysdata.net

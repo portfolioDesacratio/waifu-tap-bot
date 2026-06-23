@@ -29,6 +29,18 @@ bot = Bot(
     default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
 
+# Путь к папке с фронтендом
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
+
+# ─── Frontend handler ───
+
+async def index_handler(request):
+    """Отдаёт index.html для мини аппа"""
+    index_path = os.path.join(FRONTEND_DIR, "index.html")
+    if os.path.exists(index_path):
+        return web.FileResponse(index_path)
+    return web.Response(text="index.html not found", status=404)
+
 # ─── Webhook handler ───
 
 async def webhook_handler(request):
@@ -148,7 +160,12 @@ def create_app():
     app.router.add_post("/webhook", webhook_handler)
     app.router.add_get("/webhook", webhook_handler)
     app.router.add_get("/health", health_handler)
-    app.router.add_get("/", health_handler)
+    
+    # Статика для мини аппа — на корне
+    assets_dir = os.path.join(FRONTEND_DIR, "assets")
+    if os.path.isdir(assets_dir):
+        app.router.add_static("/assets", assets_dir, show_index=False)
+    app.router.add_get("/", index_handler)
     
     return app
 
