@@ -244,124 +244,290 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
 .page-body::-webkit-scrollbar-track{background:transparent;}
 .page-body::-webkit-scrollbar-thumb{background:rgba(245,194,224,0.1);border-radius:10px;}
 
-/* ─── RESPONSIVE — все устройства ─── */
+/* ─── RESPONSIVE — три форм-фактора ─── */
 
-/* Очень маленькие телефоны (<360px, iPhone SE, старые Android) */
+/* ═══════════════════════════════════════════
+   1. ТЕЛЕФОНЫ (< 768px) — fullscreen, снизу кнопки
+   ═══════════════════════════════════════════ */
+
+/* Очень маленькие (< 360px, iPhone SE) */
 @media(max-width:359px){
-  #waifu-wrap{width:180px;height:240px;}
-  #hud{padding:10px 8px 6px;}
-  #hud-title{font-size:12px;}
-  #hud-coins{font-size:13px;padding:4px 10px 4px 6px;}
-  #hud-stars{font-size:12px;padding:4px 8px 4px 6px;}
-  #waifu-name{font-size:13px;}
-  .nav-btn{padding:6px 8px;min-width:36px;}
-  .nav-btn .nav-icon{font-size:18px;}
-  .nav-btn span:last-child{font-size:7px;}
-  .page-header h2{font-size:14px;}
+  #hud{padding:8px 8px 4px;}
+  #hud-title{font-size:11px;}
+  #hud-coins{font-size:12px;padding:3px 8px 3px 5px;}
+  #hud-stars{font-size:11px;padding:3px 6px 3px 5px;}
+  #waifu-wrap{width:160px;height:200px;}
+  #waifu-name{font-size:12px;}
+  #tap-hint{font-size:8px;letter-spacing:2px;}
+  .nav-btn{padding:4px 6px;min-width:32px;}
+  .nav-btn .nav-icon{font-size:16px;margin-bottom:0;}
+  .nav-btn span:last-child{font-size:6px;}
+  #energy-text{font-size:8px;min-width:34px;}
+  #energy-track{height:4px;}
   .shop-grid{grid-template-columns:1fr;}
   .waifu-grid{grid-template-columns:1fr;}
-  .waifu-card .w-img-wrap{height:120px;}
-  .daily-grid{grid-template-columns:repeat(7,1fr);gap:4px;}
+  .waifu-card .w-img-wrap{height:100px;}
+  .daily-grid{grid-template-columns:repeat(7,1fr);gap:3px;}
   .d-day{aspect-ratio:0.7;}
-  .d-day .dd-num{font-size:12px;}
-  #energy-text{font-size:9px;min-width:40px;}
-  #tap-hint{font-size:9px;}
+  .d-day .dd-num{font-size:10px;}
+  .page-header h2{font-size:14px;}
+  .page-header{padding:12px 14px 10px;}
+  .page-body{padding:10px 12px 16px;}
+  .orb1{width:200px;height:200px;top:-60px;right:-60px;}
+  .orb2{width:150px;height:150px;bottom:-40px;left:-40px;}
 }
 
 /* Маленькие телефоны (360-389px) */
 @media(min-width:360px)and(max-width:389px){
-  #waifu-wrap{width:210px;height:270px;}
-  #hud{padding:12px 10px;}
+  #hud{padding:10px 10px 4px;}
   #hud-title{font-size:13px;}
+  #waifu-wrap{width:190px;height:240px;}
+  .nav-btn{padding:6px 10px;min-width:40px;}
+  .nav-btn .nav-icon{font-size:19px;}
   .shop-grid{grid-template-columns:1fr;}
   .waifu-grid{grid-template-columns:1fr;}
-  .waifu-card .w-img-wrap{height:130px;}
-  .nav-btn{padding:6px 10px;}
 }
 
-/* Средние телефоны (390-430px, iPhone 12-16, средние Android) */
+/* Средние телефоны (390-430px, iPhone 12-16) */
 @media(min-width:390px)and(max-width:430px){
-  #waifu-wrap{width:230px;height:290px;}
+  #hud{padding:12px 14px 6px;}
+  #waifu-wrap{width:220px;height:280px;}
   .shop-grid{grid-template-columns:1fr 1fr;}
   .waifu-grid{grid-template-columns:1fr 1fr;}
 }
 
-/* Большие телефоны / фаблеты (431-600px) */
-@media(min-width:431px)and(max-width:600px){
-  #waifu-wrap{width:260px;height:320px;}
+/* Большие телефоны (431-767px) */
+@media(min-width:431px)and(max-width:767px){
+  #hud{padding:14px 18px 8px;}
+  #hud-title{font-size:16px;}
+  #hud-coins{font-size:17px;}
+  #hud-stars{font-size:15px;}
+  #waifu-wrap{width:260px;height:330px;}
+  #waifu-name{font-size:17px;}
+  .nav-btn{padding:8px 14px;min-width:50px;}
+  .nav-btn .nav-icon{font-size:23px;}
   .shop-grid{grid-template-columns:1fr 1fr;}
   .waifu-grid{grid-template-columns:1fr 1fr;}
   .daily-grid{grid-template-columns:repeat(7,1fr);gap:8px;}
+  .orb1{width:300px;height:300px;top:-100px;right:-80px;}
+  .orb2{width:220px;height:220px;bottom:-60px;left:-60px;}
 }
 
-/* Планшеты (601-900px) */
-@media(min-width:601px)and(max-width:900px){
-  #waifu-wrap{width:300px;height:380px;}
-  #hud-title{font-size:18px;}
-  #hud{padding:16px 24px 10px;}
-  .nav-btn{padding:10px 18px;font-size:10px;}
-  .nav-btn .nav-icon{font-size:26px;}
-  .shop-grid{grid-template-columns:1fr 1fr 1fr;}
-  .waifu-grid{grid-template-columns:1fr 1fr 1fr;}
-  .daily-grid{grid-template-columns:repeat(7,1fr);gap:10px;}
-  .page-header h2{font-size:20px;}
-  .page-body{padding:18px 24px 24px;}
-  .waifu-card .w-img-wrap{height:160px;}
-}
-
-/* Десктоп (901px+) */
-@media(min-width:901px){
-  #app{max-width:480px;margin:0 auto;border-left:1px solid rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.04);}
-  #waifu-wrap{width:280px;height:340px;}
-  #hud-title{font-size:17px;}
-  #hud{padding:14px 20px 8px;}
-  #hud-coins{font-size:16px;padding:5px 16px 5px 8px;}
-  #hud-stars{font-size:14px;padding:5px 12px 5px 8px;}
-  .nav-btn{padding:8px 16px;min-width:56px;border-radius:20px;gap:3px;}
-  .nav-btn .nav-icon{font-size:24px;}
-  .nav-btn span:last-child{font-size:10px;letter-spacing:0.8px;}
-  .shop-grid{grid-template-columns:1fr 1fr;}
-  .waifu-grid{grid-template-columns:1fr 1fr;}
-  .daily-grid{grid-template-columns:repeat(7,1fr);gap:10px;}
-  .page-header h2{font-size:19px;}
-  .page-body{padding:16px 22px 22px;}
+/* Высокие экраны на телефонах (полноэкранные без рамок) */
+@media(min-height:800px)and(max-width:767px){
+  #waifu-wrap{width:270px;height:350px;}
   .waifu-card .w-img-wrap{height:150px;}
-  #game{}
-  #energy-wrap{}
-  #nav{}
-  .ref-section{}
-  .lb-entry{padding:12px 8px;}
-  #app::before{background:radial-gradient(ellipse at 30% 25%,rgba(255,105,180,0.12) 0%,transparent 50%),
-               radial-gradient(ellipse at 70% 75%,rgba(200,80,255,0.10) 0%,transparent 50%);}
-  #adBanner{max-width:400px;}
 }
 
-/* Планшеты и телефоны в альбомной ориентации */
-@media(orientation:landscape)and(max-height:500px){
-  #waifu-wrap{width:160px;height:180px;}
-  #waifu-name{font-size:13px;margin-top:3px;}
-  #tap-hint{display:none;}
-  #hud{padding:8px 12px 4px;}
-  #hud-title{font-size:13px;}
-  .nav-btn{padding:4px 10px;}
-  .nav-btn .nav-icon{font-size:18px;}
-  .nav-btn span:last-child{font-size:7px;}
-  .page-panel{max-height:80dvh;}
-  #energy-wrap{padding:0 12px 2px;}
-  #energy-track{height:4px;}
-  #energy-text{font-size:9px;min-width:36px;}
-}
 
-/* Очень высокие экраны (полноэкранные телефоны без рамок) */
-@media(min-height:800px){
-  #waifu-wrap{width:280px;height:360px;}
+/* ═══════════════════════════════════════════
+   2. ПЛАНШЕТЫ (768px - 1199px) — центрировано, крупнее
+   ═══════════════════════════════════════════ */
+
+@media(min-width:768px)and(max-width:1199px){
+  html,body{background:#0a0015;display:flex;align-items:center;justify-content:center;}
+  #app{width:540px;height:92dvh;max-height:900px;border-radius:32px;
+    border:1px solid rgba(255,255,255,0.06);
+    box-shadow:0 0 80px rgba(200,80,255,0.06),0 0 200px rgba(255,105,180,0.03);}
+  #particles-canvas,#spider-web{position:fixed;/* сакура и паутинка на весь экран */}
+  #hud{padding:16px 22px 10px;}
+  #hud-title{font-size:19px;}
+  #hud-coins{font-size:18px;padding:6px 18px 6px 10px;}
+  #hud-stars{font-size:16px;padding:6px 14px 6px 10px;}
+  #waifu-wrap{width:300px;height:370px;}
+  #waifu-name{font-size:19px;}
+  #energy-track{height:6px;}
+  #energy-text{font-size:11px;}
+  .nav-btn{padding:10px 18px;min-width:60px;border-radius:20px;}
+  .nav-btn .nav-icon{font-size:26px;}
+  .nav-btn span:last-child{font-size:10px;letter-spacing:1px;}
+  .shop-grid{grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .shop-card{padding:18px;border-radius:20px;}
+  .shop-card .s-icon{font-size:34px;}
+  .shop-card .s-name{font-size:14px;}
+  .waifu-grid{grid-template-columns:1fr 1fr;gap:14px;}
   .waifu-card .w-img-wrap{height:160px;}
+  .daily-grid{grid-template-columns:repeat(7,1fr);gap:10px;}
+  .d-day{aspect-ratio:0.75;}
+  .d-day .dd-num{font-size:18px;}
+  .d-day .dd-r{font-size:8px;}
+  .daily-btn{padding:18px;font-size:18px;}
+  .page-header{padding:20px 24px 16px;}
+  .page-header h2{font-size:20px;}
+  .page-close{font-size:24px;width:40px;height:40px;}
+  .page-body{padding:18px 24px 24px;}
+  .lb-entry{padding:14px 8px;}
+  .lb-rank{font-size:18px;min-width:38px;}
+  .lb-name{font-size:14px;}
+  .ref-icon{font-size:70px;}
+  .ref-title{font-size:24px;}
+  .ref-desc{font-size:13px;}
+  .ref-stats{gap:50px;}
+  .ref-stat .rs-v{font-size:36px;}
+  /* Панели страниц — не снизу, а по центру как модалка */
+  .page-overlay{display:none;align-items:center;justify-content:center;}
+  .page-overlay.show{display:flex;}
+  .page-panel{position:relative;bottom:auto;left:auto;width:520px;max-height:80dvh;border-radius:28px;max-width:94vw;
+    transform:none;animation:modalIn 0.35s cubic-bezier(0.16,1,0.3,1);}
+  .page-panel.show{display:flex;flex-direction:column;animation:modalIn 0.35s cubic-bezier(0.16,1,0.3,1);}
 }
+
+
+/* ═══════════════════════════════════════════
+   3. ДЕСКТОП (1200px+) — ахуенный, компактный, с размахом
+   ═══════════════════════════════════════════ */
+
+@media(min-width:1200px){
+  html,body{background:#060010;display:flex;align-items:center;justify-content:center;}
+
+  #app{width:580px;height:90dvh;max-height:960px;border-radius:36px;
+    border:1px solid rgba(255,255,255,0.06);
+    box-shadow:0 0 100px rgba(200,80,255,0.08),0 0 300px rgba(255,105,180,0.04);
+    background:linear-gradient(170deg,#0a0015 0%,#1a0a2e 25%,#2d1045 55%,#1a0a2e 85%,#0a0015 100%);}
+  #app::before{background:radial-gradient(ellipse at 30% 20%,rgba(255,105,180,0.13) 0%,transparent 50%),
+               radial-gradient(ellipse at 70% 80%,rgba(200,80,255,0.10) 0%,transparent 50%);}
+  #particles-canvas,#spider-web{position:fixed;/* на весь монитор */}
+  .orb1{width:400px;height:400px;top:-150px;right:-120px;opacity:0.15;}
+  .orb2{width:300px;height:300px;bottom:-100px;left:-100px;opacity:0.12;}
+  .orb3{width:200px;height:200px;top:40%;right:-80px;opacity:0.10;}
+  .orb4{width:140px;height:140px;top:10%;left:5%;opacity:0.06;}
+
+  #hud{padding:18px 24px 10px;}
+  #hud-title{font-size:20px;letter-spacing:1px;}
+  #hud-coins{font-size:18px;padding:6px 20px 6px 10px;border-radius:24px;gap:6px;}
+  #hud-stars{font-size:16px;padding:6px 16px 6px 10px;border-radius:24px;}
+  .hud-right{gap:8px;}
+
+  #game{padding:4px 0;}
+  #waifu-wrap{width:320px;height:390px;}
+  #waifu-wrap:hover{transform:scale(1.02);}
+  #waifu-wrap:active{transform:scale(0.92);}
+  #waifu-name{font-size:20px;margin-top:10px;
+    text-shadow:0 0 30px rgba(245,194,224,0.3),0 0 60px rgba(245,194,224,0.1);}
+  #tap-hint{font-size:10px;margin-top:8px;letter-spacing:4px;}
+  #tap-hint{display:block;opacity:0.2;}
+
+  #energy-wrap{padding:4px 24px 6px;}
+  #energy-bar{padding:6px 4px;}
+  #energy-icon{font-size:14px;width:24px;}
+  #energy-track{height:6px;border-radius:12px;}
+  #energy-fill{border-radius:12px;
+    background:linear-gradient(90deg,#c084fc,#f5c2e0,#ff69b4,#ff8aae,#ff69b4);}
+  #energy-text{font-size:11px;min-width:52px;}
+
+  #nav{padding:6px 6px 22px;gap:2px;}
+  .nav-btn{padding:10px 18px;min-width:64px;border-radius:22px;gap:4px;
+    transition:all 0.3s cubic-bezier(0.16,1,0.3,1);}
+  .nav-btn .nav-icon{font-size:26px;}
+  .nav-btn span:last-child{font-size:10px;letter-spacing:1px;}
+  .nav-btn:hover{color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.02);}
+  .nav-btn.active{color:#ff8ec4;background:rgba(255,105,180,0.08);
+    box-shadow:0 0 30px rgba(255,105,180,0.08);}
+  .nav-btn.active .nav-icon{filter:drop-shadow(0 0 14px rgba(255,105,180,0.35));}
+
+  /* Страницы — модалкой по центру (через flex overlay) */
+  .page-overlay{display:none;align-items:center;justify-content:center;}
+  .page-overlay.show{display:flex;}
+  .page-panel{position:relative;bottom:auto;left:auto;top:auto;
+    width:540px;max-height:82dvh;border-radius:30px;max-width:94vw;
+    border:1px solid rgba(255,255,255,0.06);
+    transform:none;animation:modalIn 0.4s cubic-bezier(0.16,1,0.3,1);}
+  .page-panel.show{display:flex;flex-direction:column;}
+  .page-overlay{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+
+  .shop-grid{grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .shop-card{border-radius:20px;padding:18px;}
+  .shop-card:hover{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);
+    transform:translateY(-2px);}
+  .shop-card .s-icon{font-size:36px;}
+  .shop-card .s-name{font-size:14px;}
+  .shop-card .s-desc{font-size:10px;}
+  .shop-card .s-price{font-size:15px;}
+
+  .waifu-grid{grid-template-columns:1fr 1fr;gap:14px;}
+  .waifu-card{border-radius:22px;}
+  .waifu-card:hover{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);}
+  .waifu-card .w-img-wrap{height:160px;padding:10px;}
+  .waifu-card .w-img-wrap img{max-height:140px;}
+  .waifu-card .w-info{padding:12px 14px 16px;}
+  .waifu-card .w-name{font-size:13px;}
+  .waifu-card .w-rarity{font-size:10px;}
+
+  .daily-grid{grid-template-columns:repeat(7,1fr);gap:10px;max-width:480px;margin:14px auto;}
+  .d-day{aspect-ratio:0.75;border-radius:16px;}
+  .d-day .dd-num{font-size:18px;}
+  .d-day .dd-r{font-size:9px;}
+  .daily-btn{padding:18px;font-size:18px;border-radius:20px;
+    transition:all 0.3s cubic-bezier(0.16,1,0.3,1);}
+  .daily-btn:hover{transform:translateY(-2px);box-shadow:0 6px 36px rgba(255,105,180,0.3);}
+  .daily-btn:active{transform:scale(0.94);}
+
+  .page-header{padding:22px 26px 16px;}
+  .page-header h2{font-size:22px;}
+  .page-close{font-size:24px;width:40px;height:40px;border-radius:14px;}
+  .page-close:hover{background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.4);}
+  .page-body{padding:18px 26px 26px;}
+
+  .lb-entry{padding:14px 10px;}
+  .lb-rank{font-size:20px;min-width:40px;}
+  .lb-ava{width:40px;height:40px;font-size:20px;}
+  .lb-name{font-size:14px;}
+  .lb-sub{font-size:10px;}
+  .lb-coins{font-size:16px;}
+
+  .ref-section{padding:18px 0;}
+  .ref-icon{font-size:80px;}
+  .ref-title{font-size:26px;}
+  .ref-desc{font-size:14px;}
+  .ref-stats{gap:60px;}
+  .ref-stat .rs-v{font-size:40px;}
+  .ref-link-box{font-size:11px;padding:16px;}
+
+  #adBanner{max-width:420px;padding:16px 32px;font-size:15px;border-radius:26px;
+    box-shadow:0 10px 50px rgba(255,105,180,0.2);}
+  #adBanner:hover{transform:translateX(-50%) scale(1.02);}
+
+  #toast{top:80px;font-size:14px;padding:16px 28px;}
+
+  .modal-box{padding:36px 28px 28px;max-width:360px;border-radius:32px;}
+  .modal-box h3{font-size:24px;}
+
+  /* Кастомный скролл для десктопа */
+  .page-body::-webkit-scrollbar{width:4px;}
+  .page-body::-webkit-scrollbar-thumb{background:rgba(245,194,224,0.15);border-radius:10px;}
+  .page-body::-webkit-scrollbar-thumb:hover{background:rgba(245,194,224,0.25);}
+
+}
+
+/* ═══════════════════════════════════════════
+   ЛАНДШАФТ НА ТЕЛЕФОНЕ
+   ═══════════════════════════════════════════ */
+@media(orientation:landscape)and(max-height:500px){
+  #waifu-wrap{width:140px;height:160px;}
+  #waifu-name{font-size:12px;margin-top:2px;}
+  #tap-hint{display:none;}
+  #hud{padding:6px 12px 2px;}
+  #hud-title{font-size:12px;}
+  #hud-coins{font-size:12px;padding:3px 10px 3px 6px;}
+  #hud-stars{font-size:11px;padding:3px 8px 3px 6px;}
+  #energy-wrap{padding:0 12px 2px;}
+  #energy-track{height:3px;}
+  #energy-text{font-size:8px;min-width:30px;}
+  #energy-icon{font-size:10px;}
+  .nav-btn{padding:3px 8px;min-width:32px;}
+  .nav-btn .nav-icon{font-size:16px;}
+  .nav-btn span:last-child{font-size:6px;}
+  .page-panel{max-height:85dvh;}
+  #nav{padding:2px 4px 10px;}
+  .orb1,.orb2,.orb3,.orb4{opacity:0.06;}
+  #game{padding:0;}
+}
+
 
 /* Safe area для iPhone X+ */
 @supports(padding:max(0px)){
-  #hud{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-top:max(14px,env(safe-area-inset-top));}
-  #nav{padding-bottom:max(18px,env(safe-area-inset-bottom));}
+  #hud{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-top:max(12px,env(safe-area-inset-top));}
+  #nav{padding-bottom:max(14px,env(safe-area-inset-bottom));}
   .page-panel{padding-bottom:env(safe-area-inset-bottom);}
 }
 </style>
@@ -1105,7 +1271,7 @@ function initParticles() {
     };
   }
 
-  function initParticles(count) {
+  function spawnPetals(count) {
     particles = [];
     for (let i = 0; i < count; i++) {
       const p = createPetal();
@@ -1182,7 +1348,7 @@ function initParticles() {
   // На десктопе ещё больше
   if (W > 900) count = 150;
   
-  initParticles(count);
+  spawnPetals(count);
   animate();
 
   // Стоп при уходе со страницы
