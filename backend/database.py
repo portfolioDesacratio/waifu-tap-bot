@@ -217,7 +217,7 @@ async def seed_shop(db):
         
         # Временные множители
         (14, 'Удача вайфу (15 мин)', 'x2 ко всем монетам на 15 минут', 3000, 2, 'temporary_boost', '{"type": "profit_multiplier", "value": 2, "duration": 900}', '🍀', 0, 0, 'boosts', 14),
-        (15, 'Благословение (30 мин)', 'x3 ко всем монетам на 30 минут', 10000, 8, 'temporary_boost', '{"type": "profit_multiplier", "value": 3, "duration": 1800}', '🌟', 0, 0, 'boosts', 15),
+        (15, 'Благословение', 'x3 ко всем монетам на 30 минут', 10000, 8, 'temporary_boost', '{"type": "profit_multiplier", "value": 3, "duration": 1800}', '🌟', 0, 0, 'boosts', 15),
         
         # Скины — теперь на ЛЮБУЮ вайфу (waifu_id=0 = универсальный)
         (16, 'Летнее платье', 'Скин для любой вайфу — летнее платье', 0, 15, 'skin', '{"type": "skin", "name": "summer_dress", "label": "🌺 Летнее платье"}', '👗', 1, 0, 'skins', 16),
