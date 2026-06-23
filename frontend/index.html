@@ -12,10 +12,10 @@
 html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI',system-ui,sans-serif;background:#0a0015;color:#fff;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 
 /* ─── CANVAS PARTICLES BACKGROUND ─── */
-#particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;}
 
 /* ─── SPIDER WEB OVERLAY ─── */
-#spider-web{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0.06;}
+#spider-web{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0.18;}
 #spider-web svg{width:100%;height:100%;}
 
 /* ─── ANIMATED BACKGROUND ─── */
@@ -311,24 +311,29 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
 
 /* Десктоп (901px+) */
 @media(min-width:901px){
-  #waifu-wrap{width:350px;height:440px;}
-  #hud-title{font-size:20px;}
-  #hud{padding:18px 28px 12px;max-width:800px;margin:0 auto;}
-  #hud-coins{font-size:18px;padding:6px 18px 6px 10px;}
-  #hud-stars{font-size:16px;padding:6px 14px 6px 10px;}
-  .nav-btn{padding:12px 22px;font-size:10px;}
-  .nav-btn .nav-icon{font-size:28px;}
-  .shop-grid{grid-template-columns:1fr 1fr 1fr 1fr;max-width:800px;margin:0 auto;}
-  .waifu-grid{grid-template-columns:1fr 1fr 1fr;max-width:800px;margin:0 auto;}
-  .daily-grid{grid-template-columns:repeat(7,1fr);gap:12px;max-width:600px;margin:14px auto;}
-  .page-header h2{font-size:22px;}
-  .page-body{padding:20px 28px 28px;}
-  .waifu-card .w-img-wrap{height:180px;}
-  #game{max-width:800px;margin:0 auto;}
-  #energy-wrap{max-width:800px;margin:0 auto;}
-  #nav{max-width:800px;margin:0 auto;}
-  .ref-section{max-width:500px;margin:0 auto;}
-  .lb-entry{padding:14px 10px;}
+  #app{max-width:480px;margin:0 auto;border-left:1px solid rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.04);}
+  #waifu-wrap{width:280px;height:340px;}
+  #hud-title{font-size:17px;}
+  #hud{padding:14px 20px 8px;}
+  #hud-coins{font-size:16px;padding:5px 16px 5px 8px;}
+  #hud-stars{font-size:14px;padding:5px 12px 5px 8px;}
+  .nav-btn{padding:8px 16px;min-width:56px;border-radius:20px;gap:3px;}
+  .nav-btn .nav-icon{font-size:24px;}
+  .nav-btn span:last-child{font-size:10px;letter-spacing:0.8px;}
+  .shop-grid{grid-template-columns:1fr 1fr;}
+  .waifu-grid{grid-template-columns:1fr 1fr;}
+  .daily-grid{grid-template-columns:repeat(7,1fr);gap:10px;}
+  .page-header h2{font-size:19px;}
+  .page-body{padding:16px 22px 22px;}
+  .waifu-card .w-img-wrap{height:150px;}
+  #game{}
+  #energy-wrap{}
+  #nav{}
+  .ref-section{}
+  .lb-entry{padding:12px 8px;}
+  #app::before{background:radial-gradient(ellipse at 30% 25%,rgba(255,105,180,0.12) 0%,transparent 50%),
+               radial-gradient(ellipse at 70% 75%,rgba(200,80,255,0.10) 0%,transparent 50%);}
+  #adBanner{max-width:400px;}
 }
 
 /* Планшеты и телефоны в альбомной ориентации */
@@ -368,22 +373,20 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
 <!-- SPIDER WEB OVERLAY -->
 <div id="spider-web">
 <svg viewBox="0 0 400 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M200 0 L200 800 M0 400 L400 400 M100 0 L100 800 M300 0 L300 800 M0 200 L400 200 M0 600 L400 600" stroke="rgba(255,150,200,0.3)" stroke-width="0.5" fill="none"/>
-  <path d="M200 0 Q250 100 200 200 M200 200 Q250 300 200 400 M200 400 Q250 500 200 600 M200 600 Q250 700 200 800" stroke="rgba(255,150,200,0.2)" stroke-width="0.5" fill="none"/>
-  <path d="M200 0 Q150 100 200 200 M200 200 Q150 300 200 400 M200 400 Q150 500 200 600 M200 600 Q150 700 200 800" stroke="rgba(255,150,200,0.2)" stroke-width="0.5" fill="none"/>
-  <path d="M0 400 Q100 350 200 400 Q300 350 400 400" stroke="rgba(255,150,200,0.15)" stroke-width="0.3" fill="none"/>
-  <path d="M0 200 Q100 150 200 200 Q300 150 400 200" stroke="rgba(255,150,200,0.12)" stroke-width="0.3" fill="none"/>
-  <path d="M0 600 Q100 550 200 600 Q300 550 400 600" stroke="rgba(255,150,200,0.12)" stroke-width="0.3" fill="none"/>
-  <!-- Дополнительные радиальные линии паутины -->
-  <path d="M200 0 Q180 50 160 100 Q140 150 120 200 Q100 250 80 300 Q60 350 40 400" stroke="rgba(255,150,200,0.1)" stroke-width="0.3" fill="none"/>
-  <path d="M200 0 Q220 50 240 100 Q260 150 280 200 Q300 250 320 300 Q340 350 360 400" stroke="rgba(255,150,200,0.1)" stroke-width="0.3" fill="none"/>
-  <path d="M40 400 Q60 450 80 500 Q100 550 120 600 Q140 650 160 700 Q180 750 200 800" stroke="rgba(255,150,200,0.1)" stroke-width="0.3" fill="none"/>
-  <path d="M360 400 Q340 450 320 500 Q300 550 280 600 Q260 650 240 700 Q220 750 200 800" stroke="rgba(255,150,200,0.1)" stroke-width="0.3" fill="none"/>
-  <!-- Концентрические круги паутины -->
-  <ellipse cx="200" cy="400" rx="40" ry="60" stroke="rgba(255,150,200,0.08)" stroke-width="0.3" fill="none"/>
-  <ellipse cx="200" cy="400" rx="80" ry="120" stroke="rgba(255,150,200,0.06)" stroke-width="0.3" fill="none"/>
-  <ellipse cx="200" cy="400" rx="130" ry="180" stroke="rgba(255,150,200,0.04)" stroke-width="0.3" fill="none"/>
-  <ellipse cx="200" cy="400" rx="190" ry="260" stroke="rgba(255,150,200,0.03)" stroke-width="0.3" fill="none"/>
+  <path d="M200 0 L200 800 M0 400 L400 400 M100 0 L100 800 M300 0 L300 800 M0 200 L400 200 M0 600 L400 600" stroke="rgba(255,130,190,0.4)" stroke-width="1.2" fill="none"/>
+  <path d="M200 0 Q250 100 200 200 M200 200 Q250 300 200 400 M200 400 Q250 500 200 600 M200 600 Q250 700 200 800" stroke="rgba(255,130,190,0.3)" stroke-width="0.8" fill="none"/>
+  <path d="M200 0 Q150 100 200 200 M200 200 Q150 300 200 400 M200 400 Q150 500 200 600 M200 600 Q150 700 200 800" stroke="rgba(255,130,190,0.3)" stroke-width="0.8" fill="none"/>
+  <path d="M0 400 Q100 350 200 400 Q300 350 400 400" stroke="rgba(255,130,190,0.2)" stroke-width="0.6" fill="none"/>
+  <path d="M0 200 Q100 150 200 200 Q300 150 400 200" stroke="rgba(255,130,190,0.18)" stroke-width="0.6" fill="none"/>
+  <path d="M0 600 Q100 550 200 600 Q300 550 400 600" stroke="rgba(255,130,190,0.18)" stroke-width="0.6" fill="none"/>
+  <path d="M200 0 Q180 50 160 100 Q140 150 120 200 Q100 250 80 300 Q60 350 40 400" stroke="rgba(255,130,190,0.15)" stroke-width="0.5" fill="none"/>
+  <path d="M200 0 Q220 50 240 100 Q260 150 280 200 Q300 250 320 300 Q340 350 360 400" stroke="rgba(255,130,190,0.15)" stroke-width="0.5" fill="none"/>
+  <path d="M40 400 Q60 450 80 500 Q100 550 120 600 Q140 650 160 700 Q180 750 200 800" stroke="rgba(255,130,190,0.15)" stroke-width="0.5" fill="none"/>
+  <path d="M360 400 Q340 450 320 500 Q300 550 280 600 Q260 650 240 700 Q220 750 200 800" stroke="rgba(255,130,190,0.15)" stroke-width="0.5" fill="none"/>
+  <ellipse cx="200" cy="400" rx="40" ry="60" stroke="rgba(255,130,190,0.12)" stroke-width="0.6" fill="none"/>
+  <ellipse cx="200" cy="400" rx="80" ry="120" stroke="rgba(255,130,190,0.10)" stroke-width="0.5" fill="none"/>
+  <ellipse cx="200" cy="400" rx="130" ry="180" stroke="rgba(255,130,190,0.08)" stroke-width="0.5" fill="none"/>
+  <ellipse cx="200" cy="400" rx="190" ry="260" stroke="rgba(255,130,190,0.06)" stroke-width="0.4" fill="none"/>
 </svg>
 </div>
 
@@ -461,7 +464,7 @@ html,body{width:100%;height:100dvh;overflow:hidden;font-family:'Inter','Segoe UI
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 // ─── КОНФИГУРАЦИЯ ───
-const API_BASE = 'https://waifutap.alwaysdata.net'; // Адрес API (бекенд)
+const API_BASE = ''; // API на том же сервере (прокси через Render)
 
 // ─── STANDA√TNE ШТУКИ (Telegram WebApp SDK) ───
 let TG = null;
@@ -542,6 +545,9 @@ function fmtCoin(n) {
 
 // ─── ИНИЦИАЛИЗАЦИЯ ───
 async function init() {
+  // Частицы сакуры
+  initParticles();
+  
   let guestMode = false;
   if (!TG) guestMode = true;
 
@@ -1051,11 +1057,13 @@ function showModal(title, text) {
 function closeModal() { document.getElementById('modal').classList.remove('show'); }
 
 // ─── SAKURA PARTICLE SYSTEM ───
-(function() {
+function initParticles() {
   const canvas = document.getElementById('particles-canvas');
+  if (!canvas) { setTimeout(initParticles, 100); return; }
   const ctx = canvas.getContext('2d');
   let W, H, particles = [];
   let animId = null;
+  let running = true;
 
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -1064,12 +1072,16 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
   window.addEventListener('resize', resize);
   resize();
 
-  const COLORS = ['rgba(255,182,193,0.5)', 'rgba(255,105,180,0.4)', 'rgba(255,192,203,0.45)', 'rgba(255,218,185,0.35)', 'rgba(238,130,238,0.3)'];
-  const PETAL_COUNTS = [40, 50, 60];
+  const COLORS = [
+    'rgba(255,182,193,0.7)', 'rgba(255,105,180,0.6)', 'rgba(255,192,203,0.65)',
+    'rgba(255,218,185,0.5)', 'rgba(238,130,238,0.5)', 'rgba(255,20,147,0.4)',
+    'rgba(255,150,200,0.6)', 'rgba(255,200,220,0.55)'
+  ];
+  const PETAL_COUNTS = [60, 90, 120];
   const PETAL_SIZES = [
+    { w: [6,14], h: [4,8] },
     { w: [5,12], h: [3,7] },
-    { w: [4,10], h: [2,6] },
-    { w: [6,14], h: [3,8] }
+    { w: [7,16], h: [4,9] }
   ];
 
   function createPetal() {
@@ -1080,15 +1092,16 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
       y: -20 - Math.random() * 100,
       w: s.w[0] + Math.random() * (s.w[1] - s.w[0]),
       h: s.h[0] + Math.random() * (s.h[1] - s.h[0]),
-      vx: -0.3 - Math.random() * 0.6,
-      vy: 0.4 + Math.random() * 0.8,
+      vx: -0.2 - Math.random() * 0.4,
+      vy: 0.6 + Math.random() * 1.0,
       rotation: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.03,
+      rotSpeed: (Math.random() - 0.5) * 0.04,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      swing: Math.random() * 2,
-      swingSpeed: 0.01 + Math.random() * 0.02,
+      swing: Math.random() * 2.5,
+      swingSpeed: 0.01 + Math.random() * 0.025,
       swingOffset: Math.random() * Math.PI * 2,
-      opacity: 0.2 + Math.random() * 0.4
+      opacity: 0.35 + Math.random() * 0.45,
+      glow: Math.random() > 0.7 // у некоторых свечение
     };
   }
 
@@ -1107,6 +1120,12 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
     ctx.rotate(p.rotation);
     ctx.globalAlpha = p.opacity;
     
+    // Размытое свечение для некоторых лепестков
+    if (p.glow) {
+      ctx.shadowColor = 'rgba(255,105,180,0.3)';
+      ctx.shadowBlur = 15;
+    }
+    
     // Рисуем лепесток сакуры
     ctx.beginPath();
     ctx.moveTo(0, -p.h/2);
@@ -1121,8 +1140,8 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
     ctx.beginPath();
     ctx.moveTo(0, -p.h/2);
     ctx.lineTo(0, p.h/2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-    ctx.lineWidth = 0.3;
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 0.5;
     ctx.stroke();
     
     ctx.restore();
@@ -1130,14 +1149,14 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
 
   function updatePetal(p) {
     p.swingOffset += p.swingSpeed;
-    p.x += p.vx + Math.sin(p.swingOffset) * 0.3;
+    p.x += p.vx + Math.sin(p.swingOffset) * 0.4;
     p.y += p.vy;
     p.rotation += p.rotSpeed;
     
-    // Имитация ветра — иногда порыв
-    if (Math.random() < 0.002) {
-      p.vx += (Math.random() - 0.5) * 0.5;
-      p.vy += (Math.random() - 0.5) * 0.3;
+    // Порывы ветра
+    if (Math.random() < 0.003) {
+      p.vx += (Math.random() - 0.5) * 0.6;
+      p.vy += (Math.random() - 0.5) * 0.4;
     }
     
     if (p.y > H + 30 || p.x < -50 || p.x > W + 50) {
@@ -1147,6 +1166,7 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
   }
 
   function animate() {
+    if (!running) return;
     ctx.clearRect(0, 0, W, H);
     for (const p of particles) {
       updatePetal(p);
@@ -1159,10 +1179,15 @@ function closeModal() { document.getElementById('modal').classList.remove('show'
   let count = PETAL_COUNTS[1];
   if (W < 380) count = PETAL_COUNTS[0];
   else if (W > 600) count = PETAL_COUNTS[2];
+  // На десктопе ещё больше
+  if (W > 900) count = 150;
   
   initParticles(count);
   animate();
-})();
+
+  // Стоп при уходе со страницы
+  window.addEventListener('beforeunload', () => { running = false; if (animId) cancelAnimationFrame(animId); });
+}
 
 // ─── СТАРТ ───
 document.addEventListener('DOMContentLoaded', init);

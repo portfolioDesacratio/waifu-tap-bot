@@ -32,6 +32,58 @@ bot = Bot(
 # Путь к папке с фронтендом
 FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
 
+# API бэкенд (alwaysdata)
+BACKEND_API = "https://waifutap.alwaysdata.net"
+
+# ─── API Proxy ───
+
+async def api_proxy(request):
+    """Проксирует /api/* запросы на alwaysdata (единый origin, без CORS)"""
+    import aiohttp
+    path = request.match_info.get('path', '')
+    qs = request.query_string
+    url = f"{BACKEND_API}/api/{path}"
+    if qs:
+        url += f"?{qs}"
+    
+    data = None
+    if request.method in ('POST', 'PUT', 'PATCH'):
+        try:
+            data = await request.json()
+        except:
+            data = await request.read()
+    
+    headers = {
+        'Content-Type': request.content_type or 'application/json',
+        'Accept': 'application/json',
+    }
+    # Пробрасываем заголовки Telegram
+    for h in ('X-Admin-Id', 'X-Telegram-Init-Data'):
+        if h in request.headers:
+            headers[h] = request.headers[h]
+    
+    timeout = aiohttp.ClientTimeout(total=15)
+    try:
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.request(
+                method=request.method,
+                url=url,
+                json=data if isinstance(data, dict) else None,
+                data=data if isinstance(data, bytes) else None,
+                headers=headers
+            ) as resp:
+                body = await resp.read()
+                return web.Response(
+                    status=resp.status,
+                    body=body,
+                    content_type=resp.content_type or 'application/json',
+                    headers={'Access-Control-Allow-Origin': '*'}
+                )
+    except asyncio.TimeoutError:
+        return web.json_response({"success": False, "error": "API timeout"}, status=504)
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=502)
+
 # ─── Frontend handler ───
 
 async def index_handler(request):
@@ -166,6 +218,9 @@ def create_app():
     if os.path.isdir(assets_dir):
         app.router.add_static("/assets", assets_dir, show_index=False)
     app.router.add_get("/", index_handler)
+    
+    # API прокси — все /api/* → всегдаdata
+    app.router.add_route("*", "/api/{path:.*}", api_proxy)
     
     return app
 
