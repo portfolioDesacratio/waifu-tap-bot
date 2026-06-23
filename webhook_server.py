@@ -385,8 +385,11 @@ async def api_admin_addstars(request):
 
 async def api_admin_stats(request):
     try:
-        data = await request.json()
-        admin_id = data.get("admin_id")
+        if request.method == 'GET':
+            admin_id = int(request.query.get("admin_id", 0))
+        else:
+            data = await request.json()
+            admin_id = data.get("admin_id", 0)
         if int(admin_id or 0) != config.ADMIN_ID:
             return json_response({"success": False, "error": "Access denied"}, 403)
         db = await get_db()
@@ -425,6 +428,29 @@ async def api_admin_clear(request):
         from backend.database import clear_all_users
         result = await clear_all_users()
         return json_response(result)
+    except Exception as e:
+        return json_response({"success": False, "error": str(e)}, 500)
+
+async def api_admin_broadcast(request):
+    """Рассылка всем пользователям (заглушка)"""
+    try:
+        data = await request.json()
+        admin_id = data.get("admin_id")
+        if int(admin_id or 0) != config.ADMIN_ID:
+            return json_response({"success": False, "error": "Access denied"}, 403)
+        text = data.get("text", "")
+        db = await get_db()
+        try:
+            cursor = await db.execute("SELECT COUNT(*) FROM users")
+            total = (await cursor.fetchone())[0]
+            logger.info(f"[BROADCAST] Admin {admin_id}: {text[:50]}... to {total} users")
+            return json_response({
+                "success": True,
+                "sent": total,
+                "message": "Рассылка запущена. В продакшене добавить очередь."
+            })
+        finally:
+            await db.close()
     except Exception as e:
         return json_response({"success": False, "error": str(e)}, 500)
 
@@ -603,6 +629,8 @@ def create_app():
     app.router.add_post("/api/admin/addcoins", api_admin_addcoins)
     app.router.add_post("/api/admin/addstars", api_admin_addstars)
     app.router.add_post("/api/admin/stats", api_admin_stats)
+    app.router.add_get("/api/admin/stats", api_admin_stats)
+    app.router.add_post("/api/admin/broadcast", api_admin_broadcast)
     app.router.add_post("/api/admin/clear", api_admin_clear)
     
     return app
